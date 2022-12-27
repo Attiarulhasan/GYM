@@ -1,15 +1,19 @@
-;(function (w, $, undefined) {
+;
+(function (w, $, undefined) {
 
   var methods = {} // external method api
-    , supports3D = true // set during vendorPrefix determination
-    , slideAnimators = {} // map of animation effect objects
-    , defaults = { // default required settings
-        speed: 800
-      , timeout: 5000
-      , autoScroll: false
-      , pauseOnHover: false
-      , effect: 'scrollVert3d'
-      , perspective: 1000
+    ,
+    supports3D = true // set during vendorPrefix determination
+    ,
+    slideAnimators = {} // map of animation effect objects
+    ,
+    defaults = { // default required settings
+      speed: 800,
+      timeout: 5000,
+      autoScroll: false,
+      pauseOnHover: false,
+      effect: 'scrollVert3d',
+      perspective: 1000
     };
 
   w.jqBoxSlider = methods; // Global alias for easy extension
@@ -18,13 +22,13 @@
 
   // sets up all selected boxes with applied options
   methods.init = function (opts) {
-    var defaultSettings = $.extend({}, defaults, opts)
-      , animator = methods.slideAnimator(defaultSettings.effect);
+    var defaultSettings = $.extend({}, defaults, opts),
+      animator = methods.slideAnimator(defaultSettings.effect);
 
     return this.each(function () {
-      var $this = $(this)
-        , $slides = $this.children()
-        , settings = $.extend({}, defaultSettings);
+      var $this = $(this),
+        $slides = $this.children(),
+        settings = $.extend({}, defaultSettings);
 
       $this.data('bssettings', settings);
       settings.slideAnimator = animator;
@@ -60,21 +64,21 @@
       showNextSlide($box, index);
     });
   };
-  
+
   // moves the slider to the next slide
   methods.next = function () {
     return this.each(function () {
       var $box = $(this);
-      
+
       showNextSlide($box);
     });
   };
-  
+
   // moves the slider to the previous slide
   methods.prev = function () {
     return this.each(function () {
       var $box = $(this);
-      
+
       showNextSlide($box, null, true);
     });
   };
@@ -110,8 +114,8 @@
     }
 
     return this.each(function (i, el) {
-      var $box = $(this)
-        , settings = $box.data('bssettings') || {};
+      var $box = $(this),
+        settings = $box.data('bssettings') || {};
 
       settings[setting] = newValue;
       resetAutoScroll($box, settings);
@@ -134,9 +138,9 @@
   // destroy the plugin for the selected sliders
   methods.destroy = function () {
     return this.each(function () {
-      var $box = $(this)
-        , data = $box.data() || {}
-        , settings = data.bssettings;
+      var $box = $(this),
+        data = $box.data() || {},
+        settings = data.bssettings;
 
       if (settings && typeof settings.slideAnimator === 'object') {
         if (settings.autointv) {
@@ -156,13 +160,17 @@
 
     if (settings.next != null) {
       $controls = $controls.add($(settings.next).on(
-        'click', { reverse: false }, nextSlideListener
+        'click', {
+          reverse: false
+        }, nextSlideListener
       ));
     }
 
     if (settings.prev != null) {
       $controls = $controls.add($(settings.prev).on(
-        'click', { reverse: true }, nextSlideListener
+        'click', {
+          reverse: true
+        }, nextSlideListener
       ));
     }
 
@@ -186,8 +194,8 @@
 
   // event listener for play pause button
   var playPauseListener = function (ev) {
-    var $this = $(this)
-      , $box = $this.data('bsbox');
+    var $this = $(this),
+      $box = $this.data('bsbox');
 
     togglePlayPause.call($box);
     $this.toggleClass('paused');
@@ -196,8 +204,8 @@
 
   // event listener for pause on hover
   var togglePlayPause = function (ev, reset, settings) {
-    var $box = $(this)
-      , playing;
+    var $box = $(this),
+      playing;
 
     settings || (settings = $box.data('bssettings'));
     playing = settings.autointv != null;
@@ -218,12 +226,9 @@
 
   // moves the slider to the next or previous slide
   var showNextSlide = function ($box, index, reverse) {
-    var settings = $box.data('bssettings')
-      , $slides = $box.children()
-      , currIndex
-      , nextIndex
-      , $currSlide
-      , $nextSlide;
+    var settings = $box.data('bssettings'),
+      $slides = $box.children(),
+      currIndex, nextIndex, $currSlide, $nextSlide;
 
     // apply slide filter so we only have the content slides
     if (settings._slideFilter != null) {
@@ -231,8 +236,7 @@
         $slides = $slides.filter(function (index) {
           return settings._slideFilter.call($slides, index, settings);
         });
-      }
-      else {
+      } else {
         $slides = $slides.filter(settings.slideFilter);
       }
     }
@@ -255,23 +259,22 @@
     // add additional settings for the transition and
     // call the slide animation
     $.extend(settings, settings.slideAnimator.transition($.extend({
-        $box: $box
-      , $slides: $slides
-      , $currSlide: $currSlide
-      , $nextSlide: $nextSlide
-      , reverse: reverse
-      , currIndex: currIndex
-      , nextIndex: nextIndex
+      $box: $box,
+      $slides: $slides,
+      $currSlide: $currSlide,
+      $nextSlide: $nextSlide,
+      reverse: reverse,
+      currIndex: currIndex,
+      nextIndex: nextIndex
     }, settings)));
 
     setTimeout( // remove the active flag class once transition is complete
-        function () {
-          $box.removeClass('jbs-in-motion');
-          if (typeof settings.onafter === 'function') {
-            settings.onafter.call($box, $currSlide, $nextSlide, currIndex, nextIndex);
-          }
+      function () {
+        $box.removeClass('jbs-in-motion');
+        if (typeof settings.onafter === 'function') {
+          settings.onafter.call($box, $currSlide, $nextSlide, currIndex, nextIndex);
         }
-      , settings.speed
+      }, settings.speed
     );
 
     // cache settings for next transition
@@ -294,8 +297,7 @@
     if (nextIndex == null) { // came from next button click
       if (reverse) {
         nextIndex = currIndex - 1 < 0 ? slidesLen - 1 : currIndex - 1;
-      }
-      else {
+      } else {
         nextIndex = currIndex + 1 < slidesLen ? currIndex + 1 : 0;
       }
     }
@@ -304,7 +306,9 @@
       nextIndex === currIndex ||
       nextIndex >= slidesLen ||
       nextIndex < 0
-    ) { return -1; }
+    ) {
+      return -1;
+    }
 
     return nextIndex;
   };
@@ -313,8 +317,8 @@
   // the plugin is destroyed or reset
   var cacheCSS = function ($el, name, settings, extraAtts) {
     var attributes = [
-      'position',   'top',    'left',   'display',  'overflow',
-      'width',      'height'
+      'position', 'top', 'left', 'display', 'overflow',
+      'width', 'height'
     ].concat(extraAtts || []);
     settings.origCSS || (settings.origCSS = {});
     settings.origCSS[name] || (settings.origCSS[name] = {});
@@ -326,8 +330,8 @@
 
   // set the correct vendor prefix for the css properties
   var vendorPrefix = (function () {
-    var bs = document.body.style
-      , prefix = '';
+    var bs = document.body.style,
+      prefix = '';
 
     if ('webkitTransition' in bs) {
       prefix = '-webkit-';
